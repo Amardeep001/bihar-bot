@@ -1,5 +1,3 @@
-import Loader from "../commonComponent/loader";
-
 // component which give only one result at a time
 const SingleResult = ({ resultData, loading }) => {
   return (
