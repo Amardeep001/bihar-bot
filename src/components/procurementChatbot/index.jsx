@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import SendIcon from "@mui/icons-material/Send";
-import SettingsVoiceIcon from "@mui/icons-material/SettingsVoice";
 import { Snackbar } from "@mui/material";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ThreeDotsLoader } from "../commonComponent/loader";
@@ -23,7 +22,6 @@ const ProcurementChatbot = () => {
   const [gadChatbotInput, setGadChatbotInput] = useState(gadInput || []);
   const [gadChatbotOutput, setGadChatbotOutput] = useState(gadOutput || []);
   const [open, setOpen] = React.useState(false);
-  const [micOpen, setMicOpen] = useState(false);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -94,34 +92,7 @@ const ProcurementChatbot = () => {
   };
 
   const handleRegenerate = () => {
-    // setSearchText(gadChatbotInput[-1]);
-    // let arr = gadChatbotInput.pop();
-    // setGadChatbotInput(arr);
     handleSearch();
-  };
-
-  const startSpeechRecognition = () => {
-    const recognition = new window.webkitSpeechRecognition();
-    recognition.onstart = () => {
-      setMicOpen(true);
-      console.log("Speech recognition started");
-    };
-
-    recognition.onresult = (event) => {
-      const speechToText = event.results[0][0].transcript;
-      setSearchText(speechToText);
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error", event.error);
-    };
-
-    recognition.onend = () => {
-      setMicOpen(false);
-      console.log("Speech recognition ended");
-    };
-
-    recognition.start();
   };
 
   useEffect(() => {
@@ -145,21 +116,26 @@ const ProcurementChatbot = () => {
           className="w-full h-full object-fill "
           src={procurementLogo}
         />
-        {/* <h1 className="text-white text-[24px] font-bold mx-5 ">
-          Procurement Bot
-        </h1> */}
       </div>
-      {/* <p className="text-black mx-5 my-3 ">
-        Search content from General Finance Rules, Bihar Finance Rules and
-        Procurement of Goods Manual.
-      </p> */}
       <hr className="h-px bg-gray-400 border-0"></hr>
       <div className="w-full max-h-[60%] rounded-md pb-5 overflow-y-auto ">
+        {gadChatbotInput.length === 0 && (
+          <div className=" rounded-lg py-5 mt-[100px] mx-[120px] px-5 text-center flex flex-col items-center justify-center">
+            <h1 className="text-[24px] text-gray-500 font-medium ">
+              Start Your Search Today
+            </h1>
+            <p className="mt-3 text-gray-400 ">
+              Procurement AI BOT searches content from General Financial Rules
+              (2017) , The Bihar Finance Rules (2005) , and Manual for
+              Procurement of Works (2022).
+            </p>
+          </div>
+        )}
         {gadChatbotInput.map((item, index) => {
           return (
             <>
               <div className="flex justify-end mx-5 my-5 " ref={paragraphRef}>
-                <div className="border border-black bg-[#ecd3c5] text-black rounded-lg px-5 py-1 max-w-[90%] ">
+                <div className="border shadow-md border-black bg-[#ecd3c5] text-black rounded-lg px-5 py-1 max-w-[90%] ">
                   {/* {item} */}
                   <div className="flex gap-3 my-2 text-gray-600 text-sm flex-1">
                     <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
@@ -256,7 +232,7 @@ const ProcurementChatbot = () => {
                         </span>
                         {/* {gadChatbotOutput[index]} */}
                         <div className="mt-5 flex gap-x-[10px] ">
-                          <div className="w-[33%] px-[10px] py-[20px] text-center border rounded-lg bg-gray-50 ">
+                          <div className="w-[33%] px-[10px] py-[20px] text-center border rounded-lg bg-gray-50 shadow-md ">
                             <a href={gfrPdf} target="_blank" rel="noreferrer">
                               <button className="bg-[#EEF6FF] cursor-pointer text-[12px] font-medium border border-[#3874D3] rounded-md px-2 py-1 ">
                                 General Financial Rules, 2017
@@ -268,7 +244,7 @@ const ProcurementChatbot = () => {
                                 gadChatbotOutput[index]}
                             </p>
                           </div>
-                          <div className="w-[33%] px-[10px] py-[20px] text-center border rounded-lg bg-gray-50">
+                          <div className="w-[33%] px-[10px] py-[20px] text-center border rounded-lg bg-gray-50 shadow-md ">
                             <a href={bfrPdf} target="_blank" rel="noreferrer">
                               <button className="bg-[#EEF6FF] cursor-pointer text-[12px] font-medium border border-[#3874D3] rounded-md px-2 py-1 ">
                                 The Bihar Finance Rules, 2005
@@ -281,7 +257,7 @@ const ProcurementChatbot = () => {
                                 gadChatbotOutput[index]}
                             </p>
                           </div>
-                          <div className="w-[33%] p-[10px] py-[20px] text-center border rounded-lg bg-gray-50">
+                          <div className="w-[33%] p-[10px] py-[20px] text-center border rounded-lg bg-gray-50 shadow-md ">
                             <a href={cvcPdf} target="_blank" rel="noreferrer">
                               <button className="bg-[#EEF6FF] cursor-pointer text-[12px] font-medium border border-[#3874D3] rounded-md px-2 py-1 ">
                                 Manual for Procurement of Works, 2022
@@ -357,14 +333,6 @@ const ProcurementChatbot = () => {
         })}
       </div>
       <div className="flex absolute bottom-0 rounded-lg w-full px-5 my-5 box-border ">
-        {/* <button
-          className={`w-[5%] ${
-            micOpen ? "bg-black" : "bg-gray-500"
-          }  text-white cursor-pointer rounded-l-md`}
-          onClick={startSpeechRecognition}
-        >
-          <SettingsVoiceIcon />
-        </button> */}
         <input
           ref={inputRef}
           type="text"

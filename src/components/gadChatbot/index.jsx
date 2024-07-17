@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import SendIcon from "@mui/icons-material/Send";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import SettingsVoiceIcon from "@mui/icons-material/SettingsVoice";
 import { ThreeDotsLoader } from "../commonComponent/loader";
 import { Snackbar } from "@mui/material";
 import { API_URL } from "../../utils/constants";
@@ -19,7 +18,6 @@ const GadChatbot = () => {
   const [gadChatbotInput, setGadChatbotInput] = useState(gadInput || []);
   const [gadChatbotOutput, setGadChatbotOutput] = useState(gadOutput || []);
   const [open, setOpen] = React.useState(false);
-  const [micOpen, setMicOpen] = useState(false);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -84,30 +82,6 @@ const GadChatbot = () => {
     setOpen(false);
   };
 
-  const startSpeechRecognition = () => {
-    const recognition = new window.webkitSpeechRecognition();
-    recognition.onstart = () => {
-      setMicOpen(true);
-      console.log("Speech recognition started");
-    };
-
-    recognition.onresult = (event) => {
-      const speechToText = event.results[0][0].transcript;
-      setSearchText(speechToText);
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error", event.error);
-    };
-
-    recognition.onend = () => {
-      setMicOpen(false);
-      console.log("Speech recognition ended");
-    };
-
-    recognition.start();
-  };
-
   useEffect(() => {
     if (gadChatbotInput.length) {
       paragraphRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -129,18 +103,24 @@ const GadChatbot = () => {
           General Administrative Department BOT
         </h1>
       </div>
-
-      {/* <p className="text-black mx-5 my-3 ">
-        Search content from documents of General Administrative Department of
-        Bihar.
-      </p> */}
       {/* <hr className="h-px bg-gray-400 border-0"></hr> */}
       <div className="h-[60%] rounded-md pb-5 overflow-y-auto">
+        {gadChatbotInput.length === 0 && (
+          <div className=" rounded-lg py-5 mt-[100px] mx-[120px] px-5 text-center flex flex-col items-center justify-center">
+            <h1 className="text-[24px] text-gray-500 font-medium ">
+              Start Your Search Today
+            </h1>
+            <p className="mt-3 text-gray-400 ">
+              GAD AI BOT search content from documents of General Administrative
+              Department of Bihar.
+            </p>
+          </div>
+        )}
         {gadChatbotInput.map((item, index) => {
           return (
             <>
               <div className="flex justify-end mx-5 my-5" ref={paragraphRef}>
-                <div className="border border-black bg-[#ecd3c5] text-black rounded-lg px-5 py-1 max-w-[90%] ">
+                <div className="border shadow-md border-black bg-[#ecd3c5] text-black rounded-lg px-5 py-1 max-w-[90%] ">
                   {/* {item} */}
                   <div className="flex gap-3 my-2 text-gray-600 text-sm flex-1">
                     <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
@@ -211,7 +191,7 @@ const GadChatbot = () => {
 
               {gadChatbotOutput.length > 0 && gadChatbotOutput[index] && (
                 <div className="text-left mx-5 my-5 max-w-[70%] ">
-                  <div className=" border resize-none border-black h-full bg-gray-200 rounded-lg px-5 py-1 ">
+                  <div className=" border shadow-md resize-none border-black h-full bg-gray-200 rounded-lg px-5 py-1 ">
                     {/* {gadChatbotOutput[index]} */}
                     <div className="flex gap-3 my-4 text-gray-600 text-sm flex-1">
                       <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
@@ -298,14 +278,6 @@ const GadChatbot = () => {
       </div>
 
       <div className="flex absolute bottom-0 rounded-lg w-full px-5 my-5 box-border ">
-        {/* <button
-          className={`w-[5%] ${
-            micOpen ? "bg-black" : "bg-gray-500"
-          }  text-white cursor-pointer rounded-l-md`}
-          onClick={startSpeechRecognition}
-        >
-          <SettingsVoiceIcon />
-        </button> */}
         <input
           ref={inputRef}
           type="text"
